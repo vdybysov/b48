@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { color-scheme: light dark; --bg: #fff; --fg: #222; --muted: #777; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1e1f22; --fg: #e3e4e6; --muted: #9a9ba0; } }
+  body { margin: 0; padding: 14px 16px; width: 260px; background: var(--bg); color: var(--fg); font: 13px/1.4 -apple-system, system-ui, sans-serif; }
+  h1 { font-size: 14px; margin: 0 0 10px; }
+  label { display: flex; gap: 8px; align-items: flex-start; margin: 8px 0; cursor: pointer; }
+  small { display: block; color: var(--muted); }
+  p { color: var(--muted); font-size: 12px; margin: 12px 0 0; }
+</style>
+</head>
+<body>
+  <h1>B48</h1>
+  <label><input type="checkbox" id="theme"> <span>Тёмная тема</span></label>
+  <label><input type="checkbox" id="render"> <span>Показывать Markdown<small>таблицы, код, списки, заголовки</small></span></label>
+  <label><input type="checkbox" id="send"> <span>Отправлять Markdown как BBCode<small>коллеги без расширения тоже увидят форматирование</small></span></label>
+  <label><input type="checkbox" id="quiet"> <span>Тихое чтение<small>не отмечать прочитанным, пока не нажмёте ✓ в шапке чата или «Прочитать» в меню</small></span></label>
+  <p>Тема переключается сразу, рендер — после перезагрузки вкладки.</p>
+  <script src="popup.js"></script>
+</body>
+</html>

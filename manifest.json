@@ -1,0 +1,86 @@
+{
+  "manifest_version": 3,
+  "name": "B48 — тёмная тема и удобства для Битрикс24",
+  "short_name": "B48",
+  "version": "0.8.1",
+  "description": "Тёмная тема для всего портала, Markdown в сообщениях, вставка с форматированием, папки «Личные» и «Чаты», «Отложить на потом», тихое чтение.",
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "B48",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.bitrix24.ru/*",
+        "https://*.bitrix24.com/*",
+        "https://*.bitrix24.by/*",
+        "https://*.bitrix24.kz/*",
+        "https://*.bitrix24.de/*",
+        "https://*.bitrix24.eu/*"
+      ],
+      "js": [
+        "src/bridge.js",
+        "src/theme.js"
+      ],
+      "css": [
+        "src/theme.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": [
+        "https://*.bitrix24.ru/*",
+        "https://*.bitrix24.com/*",
+        "https://*.bitrix24.by/*",
+        "https://*.bitrix24.kz/*",
+        "https://*.bitrix24.de/*",
+        "https://*.bitrix24.eu/*"
+      ],
+      "js": [
+        "src/md.js",
+        "src/paste.js",
+        "src/main.js",
+        "src/later.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": true
+    }
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/icon-192.png",
+        "icons/icon-512.png",
+        "icons/icon-dark-192.png",
+        "icons/icon-dark-512.png"
+      ],
+      "matches": [
+        "https://*.bitrix24.ru/*",
+        "https://*.bitrix24.com/*",
+        "https://*.bitrix24.by/*",
+        "https://*.bitrix24.kz/*",
+        "https://*.bitrix24.de/*",
+        "https://*.bitrix24.eu/*"
+      ]
+    }
+  ]
+}
