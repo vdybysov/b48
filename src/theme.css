@@ -463,3 +463,23 @@
 :root[data-b48-theme="1"] .hljs-variable, :root[data-b48-theme="1"] .hljs-template-variable, :root[data-b48-theme="1"] .hljs-params { color: #e6edf3; }
 :root[data-b48-theme="1"] .hljs-addition { color: #aff5b4; background: rgba(46, 160, 67, .2); }
 :root[data-b48-theme="1"] .hljs-deletion { color: #ffdcd7; background: rgba(248, 81, 73, .2); }
+
+/* Generic file icon (.md, .txt, unknown types) is a light page; colored type icons stay as they are */
+:root[data-b48-theme="1"] .ui-icon-file-empty > i { filter: brightness(.42) contrast(1.15); }
+
+/* Extension badge on the generic file icon (set by files.js), styled like Bitrix's typed icons */
+.ui-icon-file-empty[data-b48-ext]:not([data-b48-ext=""]) { position: relative; }
+.ui-icon-file-empty[data-b48-ext]:not([data-b48-ext=""])::after {
+  content: attr(data-b48-ext);
+  position: absolute; left: 1px; bottom: 7px;
+  max-width: calc(100% - 4px); padding: 0 3px; border-radius: 2px;
+  background: var(--b48-ext-bg, #6b7480); color: #fff;
+  font: 700 8px/12px -apple-system, system-ui, sans-serif; letter-spacing: .02em;
+  text-transform: uppercase; white-space: nowrap; overflow: hidden; pointer-events: none;
+}
+.ui-icon-file-empty[data-b48-ext="md"] { --b48-ext-bg: #3d7bfd; }
+.ui-icon-file-empty[data-b48-ext="txt"], .ui-icon-file-empty[data-b48-ext="log"] { --b48-ext-bg: #6b7480; }
+.ui-icon-file-empty[data-b48-ext="json"], .ui-icon-file-empty[data-b48-ext="yaml"], .ui-icon-file-empty[data-b48-ext="yml"],
+.ui-icon-file-empty[data-b48-ext="xml"], .ui-icon-file-empty[data-b48-ext="toml"] { --b48-ext-bg: #c77a15; }
+.ui-icon-file-empty[data-b48-ext="sql"], .ui-icon-file-empty[data-b48-ext="sh"], .ui-icon-file-empty[data-b48-ext="py"],
+.ui-icon-file-empty[data-b48-ext="js"], .ui-icon-file-empty[data-b48-ext="ts"], .ui-icon-file-empty[data-b48-ext="go"] { --b48-ext-bg: #8250df; }
