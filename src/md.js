@@ -167,7 +167,7 @@
     heading: /^\s{0,3}(#{1,6})\s+(.+?)\s*#*\s*$/,
     hr: /^\s{0,3}([-*_])(?:\s*\1){2,}\s*$/,
     quote: /^\s{0,3}>(?!>)\s?(.*)$/,
-    item: /^([ \t ]*)([-*+•☐☑]|\d{1,3}[.)])\s+(?:\[([ xX])\]\s+)?(.*)$/,
+    item: /^([ \t ]*)([-*+•☐☑]|\d{1,3}[.)]|[a-z][.)]|[ivxlcdm]{1,6}[.)])\s+(?:\[([ xX])\]\s+)?(.*)$/,
   };
   const FENCE = /^[ \t]*(```|~~~)[^\n`]*\n([\s\S]*?)\n[ \t]*\1[ \t]*$/gm;
   const BBCODE = /\[code\]([\s\S]*?)\[\/code\]/gi;
@@ -243,7 +243,7 @@
     const mark = (it) => {
       if (it.check !== undefined) return it.check === ' ' ? '☐' : '☑';
       if (it.mark === '☐' || it.mark === '☑') return it.mark;
-      return /\d/.test(it.mark) ? it.mark.replace(')', '.') : '•';
+      return /^[\da-z]+[.)]$/i.test(it.mark) ? it.mark.replace(')', '.') : '•';
     };
     if (ctx.mode === 'render') {
       const lis = items.map((it) => `<div class="b48-li" style="--b48-lvl:${it.lvl}"><span class="b48-mark">${esc(mark(it))}</span><span class="b48-li-body">${ctx.inlineHtml(it.body)}</span></div>`);
@@ -253,7 +253,7 @@
   }
 
   // ---------- public API ----------
-  const MD_HINT = /\*\*|__|~~|`|\[code\]|^\s{0,3}#{1,6}\s|^[ \t ]*([-*+•☐☑]|\d{1,3}[.)])\s|^\s{0,3}>(?!>)|\|.*\||(^|[^\p{L}\p{N}])[*_][^\s*_]|\[[^\]\n]+\]\(https?:/imu;
+  const MD_HINT = /\*\*|__|~~|`|\[code\]|^\s{0,3}#{1,6}\s|^[ \t ]*([-*+•☐☑]|\d{1,3}[.)]|[a-z][.)]|[ivxlcdm]{1,6}[.)])\s|^\s{0,3}>(?!>)|\|.*\||(^|[^\p{L}\p{N}])[*_][^\s*_]|\[[^\]\n]+\]\(https?:/imu;
 
   // Our placeholders use these invisible chars; never let them come from message text.
   const MARKS = /[\u2063\u2064]/g;
