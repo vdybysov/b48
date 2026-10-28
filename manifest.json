@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "B48 — тёмная тема и удобства для Битрикс24",
   "short_name": "B48",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Тёмная тема для всего портала, Markdown в сообщениях, вставка с форматированием, папки «Личные» и «Чаты», «Отложить на потом», тихое чтение.",
   "permissions": [
     "storage"
@@ -49,7 +49,9 @@
         "src/md.js",
         "src/paste.js",
         "src/main.js",
-        "src/later.js"
+        "src/later.js",
+        "src/lists.js",
+        "src/mdpreview.js"
       ],
       "run_at": "document_start",
       "world": "MAIN",
