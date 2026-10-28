@@ -18,6 +18,36 @@
   const esc = (s) => String(s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+  // Syntax highlighting via the bundled highlight.js (vendor/highlight). Without it: plain escaped text.
+  // highlight.js escapes its input; its output is only <span class="hljs-…"> around escaped text.
+  const HLJS = root.hljs;
+  const HL_LANGS = ['javascript', 'typescript', 'python', 'go', 'json', 'sql', 'bash', 'shell', 'yaml', 'xml', 'css',
+    'java', 'kotlin', 'php', 'csharp', 'cpp', 'c', 'rust', 'ruby', 'ini', 'diff', 'markdown'];
+  const hlCache = new Map();
+  function highlight(code, lang) {
+    if (!HLJS || code.length > 20000) return esc(code);
+    const key = (lang || '') + '\u0000' + code;
+    if (hlCache.has(key)) return hlCache.get(key);
+    let out = esc(code);
+    try {
+      lang = (lang || '').trim().toLowerCase();
+      // JSON scores low in auto-detection; recognize it exactly instead
+      if (!lang && /^\s*[[{]/.test(code)) { try { JSON.parse(code); lang = 'json'; } catch (e) { /* not JSON */ } }
+      if (lang && HLJS.getLanguage(lang)) {
+        out = HLJS.highlight(code, { language: lang, ignoreIllegals: true }).value;
+      } else {
+        // Guessing on short snippets gives random colors; only trust a confident guess
+        const r = HLJS.highlightAuto(code, HL_LANGS.filter((l) => HLJS.getLanguage(l)));
+        if (r.relevance >= 6) out = r.value;
+      }
+    } catch (e) { /* keep plain */ }
+    if (hlCache.size > 300) hlCache.delete(hlCache.keys().next().value);
+    hlCache.set(key, out);
+    return out;
+  }
+  // [CODE] bodies carry non-breaking spaces (alignment) and may start/end with a newline
+  const codeBody = (body) => body.replace(/\u00a0/g, ' ').replace(/^\n/, '').replace(/\n$/, '');
+
   // ---------- placeholders ----------
   function makeCtx(mode, decodeInline) {
     const holds = [];
@@ -169,7 +199,7 @@
     quote: /^\s{0,3}>(?!>)\s?(.*)$/,
     item: /^([ \t ]*)([-*+•☐☑]|\d{1,3}[.)]|[a-z][.)]|[ivxlcdm]{1,6}[.)])\s+(?:\[([ xX])\]\s+)?(.*)$/,
   };
-  const FENCE = /^[ \t]*(```|~~~)[^\n`]*\n([\s\S]*?)\n[ \t]*\1[ \t]*$/gm;
+  const FENCE = /^[ \t]*(```|~~~)([^\n`]*)\n([\s\S]*?)\n[ \t]*\1[ \t]*$/gm;
   const BBCODE = /\[code\]([\s\S]*?)\[\/code\]/gi;
 
   function level(indent) {
@@ -181,14 +211,16 @@
   function convert(text, ctx) {
     text = String(text).replace(/\r\n?/g, '\n');
 
-    text = text.replace(FENCE, (_, f, body) => (ctx.mode === 'render'
-      ? ctx.html(`<pre class="b48-pre"><code>${esc(body)}</code></pre>`, true)
+    text = text.replace(FENCE, (_, f, lang, body) => (ctx.mode === 'render'
+      ? ctx.html(`<pre class="b48-pre"><code class="hljs">${highlight(body, lang)}</code></pre>`, true)
       : ctx.hold(codeBB(body))));
 
     text = text.replace(BBCODE, (m, body) => {
       if (ctx.mode !== 'render') return ctx.hold(m);
       const t = isTableBlock(body.replace(/<br\s*\/?>/gi, '\n'));
-      return t ? ctx.html(tableHtml(t, ctx), true) : ctx.hold(m);
+      if (t) return ctx.html(tableHtml(t, ctx), true);
+      // Native code block look, with highlighting (Bitrix's parser would only escape it)
+      return ctx.html(`<div class="bx-im-message-content-code b48-code-block hljs">${highlight(codeBody(body))}</div>`, true);
     });
 
     const lines = text.split('\n');
@@ -299,7 +331,7 @@
     return tags(out) > tags(s) ? s : out;
   }
 
-  const api = { toBB, render, bbToMd, stripMd, isTableBlock, tableText };
+  const api = { toBB, render, bbToMd, stripMd, isTableBlock, tableText, highlight };
   if (typeof module === 'object' && module.exports) module.exports = api;
   else root.__B48_MD = api;
 })(typeof window !== 'undefined' ? window : globalThis);
